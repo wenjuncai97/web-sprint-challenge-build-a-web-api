@@ -14,7 +14,11 @@ router.get('/', (req, res, next) => {
         .then((action) => {
             res.status(200).json(action)
         })
-        .catch(next)
+        .catch(() => {
+            res.status(500).json({
+                message: "failed to retrieve actions array"
+            })
+        })
 })
 
 router.get('/:id', validateActionId, (req, res) => {
