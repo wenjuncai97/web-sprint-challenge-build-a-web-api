@@ -18,7 +18,11 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/:id', validateActionId, (req, res) => {
-    res.json(req.existingAction);
+    Action.get(req.params.id)
+        .then(action => res.status(200).json(action))
+        .catch(() => res.status(500).json({
+            message: "failed to retrieve action with id",
+        }))
 })
 
 router.post('/', validateAction, (req, res, next) => {
@@ -35,18 +39,20 @@ router.put('/:id', validateActionId, validateAction, (req, res) => {
             res.status(201).json(action)
         })
         .catch(err => {
-            res.status(404).json({
-                message: "missing id"
+            res.status(400).json({
+                message: "failed to update"
             })
         })
 })
 
 router.delete('/:id', validateActionId, (req, res) => {
-    Action.remove(req.existingAction.id)
+    Action.remove(req.params.id)
         .then(() => {
-            res.status(200).json(req.existingAction)
+            res.status(200).json({
+                message: "successfully removed action"
+            })
         })
-        .catch(err => {
+        .catch(() => {
             res.status(404).json({
                 message: "missing or wrong id"
             })
